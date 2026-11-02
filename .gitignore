@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+conseg_output/
+demo_data/
+*.nii.gz
+*.npz
+*.npy
+!tests/**
+.venv/
+venv/
+.DS_Store

@@ -1,0 +1,40 @@
+# conseg configuration: nnU-Net v2, calibrated on out-of-fold (cross-validation) predictions  [recommended]
+#
+# 1) Calibration data = nnU-Net's 5-fold cross-validation predictions of the TRAINING cases.
+#    Each training case is predicted by the fold that did not train on it, so no data leak.
+#    Produce them with softmax probabilities, eg:
+#      nnUNetv2_train DATASET CONFIG FOLD --npz          (saves fold_X/validation/*.npz)
+#    or, for a finished training:
+#      nnUNetv2_train DATASET CONFIG FOLD --val --npz
+# 2) New cases = nnUNetv2_predict ... --save_probabilities   (writes CASE.npz next to CASE.nii.gz)
+
+labels:                      # label values of your dataset.json; a list makes a composite target
+  pancreas: [1]
+  tumor: [2]
+  whole_pancreas: [1, 2]
+# channels:                  # only for region-based (sigmoid) models: probability channel of each target
+#   whole_pancreas: 0
+
+calibration:
+  probabilities:             # all five validation folders (globs allowed)
+    - /path/to/nnUNet_results/DatasetXXX/nnUNetTrainer__nnUNetPlans__3d_fullres/fold_*/validation
+  labels: /path/to/nnUNet_raw/DatasetXXX/labelsTr
+  threshold: auto            # Dice-optimal threshold per target (or a number, eg 0.5)
+  alpha: auto                # or a number, or per target: {pancreas: 0.0003, tumor: 0.0001}
+
+target:                      # cases you want to check
+  probabilities: /path/to/predictions          # folder with CASE.npz (and CASE.nii.gz)
+  labels: null               # optional: reference masks -> enables evaluation
+  images: null               # optional: images (geometry); otherwise taken from CASE.nii.gz / CASE.pkl
+
+flagging:
+  rule: top_fraction         # top_fraction | ur_threshold | calibration_percentile
+  value: 0.2                 # review the 20% most uncertain cases
+  flag_undefined: true       # also flag cases with uncertain but no certain-foreground voxels
+
+outputs:
+  dir: conseg_output
+  write_maps: true
+  write_baseline: true
+
+workers: 1                   # >1 = process cases in parallel

@@ -1,0 +1,28 @@
+# conseg configuration: one labeled pool, randomly split into calibration and test sets
+# (the design of the original study: 30% calibration, 70% test). Produces a full evaluation report.
+
+labels:
+  pancreas: [1]
+
+calibration:
+  probabilities: /path/to/predictions_with_probabilities
+  labels: /path/to/labels
+  split: 0.3                 # fraction used for calibration; the rest is the labeled test set
+  seed: 42
+  patient_map: null          # optional CSV with columns case,patient (keeps a patient on one side)
+  threshold: auto
+  alpha: auto
+
+flagging:
+  rule: top_fraction
+  value: 0.2
+
+evaluation:
+  hd95: true
+  empty_hd95: nan            # nan | diagonal
+  bootstrap: 1000
+  permutations: 10000
+  retention: [0.9, 0.5, 0.2]
+
+outputs:
+  dir: conseg_output

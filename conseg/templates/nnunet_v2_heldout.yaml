@@ -1,0 +1,26 @@
+# conseg configuration: nnU-Net (v1 or v2), calibrated on a separate labeled held-out set
+# The calibration cases must NOT have been used to train the model.
+
+labels:
+  pancreas: [1]
+
+input:
+  format: auto               # auto-detects nnU-Net v2 ('probabilities') and v1 ('softmax') .npz files
+  prob_kind: auto            # auto-detects softmax probabilities vs logits
+
+calibration:
+  probabilities: /path/to/heldout_predictions   # CASE.npz from nnUNetv2_predict --save_probabilities
+  labels: /path/to/heldout_labels               # CASE.nii.gz
+  threshold: auto
+  alpha: auto
+
+target:
+  probabilities: /path/to/new_predictions
+  labels: null
+
+flagging:
+  rule: calibration_percentile   # flag cases above the 90th percentile of calibration UR
+  value: 90
+
+outputs:
+  dir: conseg_output

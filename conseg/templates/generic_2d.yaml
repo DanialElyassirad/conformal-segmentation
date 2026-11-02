@@ -1,0 +1,24 @@
+# conseg configuration: any model, 2D images (eg, ultrasound or MRI slices)
+# Probabilities: one .npy/.npz/.nii.gz per case, either a single foreground-probability map (H x W)
+# or a multi-channel softmax (C x H x W). Labels: PNG/NIfTI masks with the same file names.
+# Values outside [0, 1] are treated as logits. HD95 is reported in pixels for PNG labels.
+
+labels:
+  lesion: [1]                # PNG masks with values {0, 255} are mapped to {0, 1} automatically
+
+input:
+  prob_kind: auto            # or sigmoid / softmax / logits_sigmoid / logits_softmax
+  label_suffix: .png
+
+calibration:
+  probabilities: /path/to/probability_maps
+  labels: /path/to/masks
+  split: 0.3
+  alpha: auto
+
+flagging:
+  rule: top_fraction
+  value: 0.2
+
+outputs:
+  dir: conseg_output
