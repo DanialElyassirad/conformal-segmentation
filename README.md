@@ -31,7 +31,7 @@ It is post hoc: the model is **not retrained** and its weights are not needed â€
 ## Installation
 
 ```bash
-git clone <repository-url> conformal-segmentation
+git clone https://github.com/DanialElyassirad/conformal-segmentation.git
 cd conformal-segmentation
 pip install .            # installs the `conseg` command
 pip install .[test]      # optional: run the tests with `pytest`
